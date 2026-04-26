@@ -1,0 +1,154 @@
+}
+# Cursor Rules - DeliFood
+
+## 🧠 SYSTEM UNDERSTANDING
+
+You are working on a multi-tenant SaaS system.
+
+This is NOT a simple CRUD app.
+
+All code must follow:
+- Multi-tenancy
+- Clean architecture
+- Separation of concerns
+
+---
+
+## 🔒 MULTI-TENANT RULES (MANDATORY)
+
+1. Every model MUST include:
+   - tenantId
+
+2. Every database query MUST include:
+   - tenantId filter
+
+3. NEVER allow cross-tenant data access
+
+4. All create operations MUST attach tenantId
+
+---
+
+## 🏗️ ARCHITECTURE RULES
+
+Follow this structure strictly:
+
+Controller → Service → Model
+
+DO NOT:
+- Put business logic in controllers
+- Access DB directly from controllers
+
+---
+
+## 📦 CODE ORGANIZATION
+
+All code must be inside:
+
+src/modules/<module_name>/
+
+Each module must have:
+- controller
+- service
+- model
+
+---
+
+## 🔑 AUTH RULES
+
+JWT payload must include:
+- userId
+- tenantId
+- role
+
+All protected routes must:
+- Validate JWT
+- Match tenantId with request
+
+---
+
+## 🌐 REQUEST FLOW
+
+Every request must go through:
+
+1. Tenant Middleware
+2. Auth Middleware (if needed)
+3. Controller
+4. Service
+5. Database
+
+---
+
+## 🧪 DATA SAFETY RULES
+
+Before writing any query:
+
+Ask:
+"Is tenantId included?"
+
+If not → FIX IT
+
+---
+
+## 🚫 FORBIDDEN PATTERNS
+
+- Query without tenantId
+- Hardcoded IDs
+- Shared global state
+- Business logic in controller
+- Mixing tenant data
+
+---
+
+## 🧩 FEATURE DEVELOPMENT RULES
+
+When adding a feature:
+
+1. Update PRODUCT_SPEC if needed
+2. Create/update model
+3. Update service
+4. Update controller
+5. Ensure tenant isolation
+
+---
+
+## 💬 COMMUNICATION STYLE
+
+When generating code:
+
+- Be explicit
+- Add comments for logic
+- Explain assumptions briefly
+- Prefer simple, readable solutions
+
+---
+
+## ⚙️ TECH STACK RULES
+
+- Node.js (Express)
+- MongoDB (Mongoose)
+- JWT Auth
+
+Avoid:
+- Adding new frameworks unless necessary
+- Over-engineering
+
+---
+
+## 🚀 PRIORITY ORDER
+
+Always prioritize:
+
+1. Correctness (tenant isolation)
+2. Simplicity
+3. Maintainability
+4. Performance
+
+---
+
+## 🧠 FINAL RULE
+
+If unsure:
+
+ALWAYS follow PRODUCT_SPEC.md
+
+It is the single source of truth.
