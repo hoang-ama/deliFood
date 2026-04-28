@@ -7,10 +7,10 @@ const FoodItem = ({ image, name, price, desc , id }) => {
 
     const {cartItems,addToCart,removeFromCart,url,currency} = useContext(StoreContext);
     const imageSrc =
-        typeof image === 'string' && image.length > 0
-            ? image.startsWith('http')
-                ? image
-                : `${url}/images/${image}`
+        image != null && image !== ''
+            ? typeof image === 'string' && !image.startsWith('http') && !image.startsWith('/')
+                ? `${url}/images/${image}`
+                : image
             : assets.header_img;
 
     return (

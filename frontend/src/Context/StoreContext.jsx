@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types, react-refresh/only-export-components */
 import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
-import { menu_list } from '../assets/assets';
+import { menu_list, food_images } from '../assets/assets';
 export const StoreContext = createContext(null);
 
 const decodeTokenPayload = (value) => {
@@ -31,7 +31,7 @@ const StoreContextProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState({});
     const [token, setToken] = useState(localStorage.getItem('token') ?? '');
     const [tenantSubdomain, setTenantSubdomainState] = useState(
-        localStorage.getItem('tenantSubdomain') ?? 'default',
+        localStorage.getItem('tenantSubdomain') ?? import.meta.env.VITE_DEFAULT_TENANT_ID ?? 'pho-houston',
     );
     const currency = '$';
     const deliveryCharge = 2.5;
@@ -87,17 +87,40 @@ const StoreContextProvider = ({ children }) => {
         setRestaurantList(restaurants);
     }, [requestHeaders, url]);
 
+    const getCategoryFromName = (name) => {
+        const lower = name.toLowerCase();
+        if (lower.includes('pho') || lower.includes('soup') || lower.includes('broth')) return 'Pho';
+        if (lower.includes('roll') || lower.includes('spring') || lower.includes('egg roll') || lower.includes('dumpling')) return 'Appetizers';
+        if (lower.includes('coffee') || lower.includes('tea') || lower.includes('juice') || lower.includes('lemonade') || lower.includes('drink') || lower.includes('bubble')) return 'Beverages';
+        if (lower.includes('noodle') || lower.includes('ramen') || lower.includes('udon')) return 'Noodles';
+        if (lower.includes('pasta') || lower.includes('spaghetti')) return 'Pasta';
+        if (lower.includes('salad')) return 'Salad';
+        if (lower.includes('sandwich') || lower.includes('banh mi')) return 'Sandwich';
+        return 'All';
+    };
+
+    const getDescriptionFromName = (name) => {
+        const lower = name.toLowerCase();
+        if (lower.includes('pho')) return 'Slow-simmered bone broth with rice noodles and fresh garnishes.';
+        if (lower.includes('spring roll')) return 'Fresh shrimp, herbs & pork wrapped in soft rice paper with peanut sauce.';
+        if (lower.includes('egg roll')) return 'Crispy golden rolls with savory pork and shrimp filling.';
+        if (lower.includes('coffee')) return 'Rich Vietnamese drip coffee with sweet condensed milk over ice.';
+        if (lower.includes('tea')) return 'Fragrant loose-leaf tea with fresh fruit and lemongrass.';
+        return 'Made fresh daily with quality ingredients.';
+    };
+
     const fetchFoodList = useCallback(async () => {
         const response = await axios.get(`${url}/api/menus`, { headers: requestHeaders });
         const menus = Array.isArray(response.data) ? response.data : [];
         setFoodList(
-            menus.map((item) => ({
+            menus.map((item, index) => ({
+                _id: item.id,
                 id: item.id,
                 name: item.name,
                 price: item.price,
-                description: 'Freshly prepared menu item',
-                category: 'All',
-                image: null,
+                description: getDescriptionFromName(item.name),
+                category: getCategoryFromName(item.name),
+                image: food_images[index % food_images.length],
                 restaurantId: item.restaurantId,
             })),
         );
