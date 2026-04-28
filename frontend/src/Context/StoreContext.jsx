@@ -209,3 +209,12 @@ const StoreContextProvider = ({ children }) => {
 }
 
 export default StoreContextProvider;
+
+const getTenantId = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tenantFromUrl = urlParams.get('tenant');
+    if (tenantFromUrl) return tenantFromUrl;
+    
+    // Logic cũ cho subdomain...
+    return import.meta.env.VITE_DEFAULT_TENANT_ID || "pho-houston";
+};

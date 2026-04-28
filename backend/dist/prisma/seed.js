@@ -1,7 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+require("dotenv/config");
+const adapter_pg_1 = require("@prisma/adapter-pg");
 const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+    throw new Error('DATABASE_URL is required to seed the database');
+}
+const prisma = new client_1.PrismaClient({
+    adapter: new adapter_pg_1.PrismaPg({ connectionString }),
+});
 async function main() {
     console.log('--- Start seeding Pho Houston data ---');
     const tenant = await prisma.tenant.upsert({
