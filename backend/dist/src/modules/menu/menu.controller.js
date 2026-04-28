@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MenuController = void 0;
 const common_1 = require("@nestjs/common");
+const tenant_id_decorator_1 = require("../../common/decorators/tenant-id.decorator");
 const roles_decorator_1 = require("../../common/decorators/roles.decorator");
 const auth_guard_1 = require("../../common/guards/auth.guard");
 const jwt_auth_guard_1 = require("../../common/guards/jwt-auth.guard");
@@ -26,11 +27,11 @@ let MenuController = class MenuController {
     constructor(menuService) {
         this.menuService = menuService;
     }
-    create(dto, req) {
-        return this.menuService.create(dto, req.tenantId);
+    create(dto, tenantId) {
+        return this.menuService.create(dto, tenantId);
     }
-    findAll(req, query) {
-        return this.menuService.findAll(req.tenantId, query.restaurantId);
+    findAll(tenantId, query) {
+        return this.menuService.findAll(tenantId, query.restaurantId);
     }
 };
 exports.MenuController = MenuController;
@@ -39,17 +40,17 @@ __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, auth_guard_1.AuthGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)('owner', 'staff'),
     __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Req)()),
+    __param(1, (0, tenant_id_decorator_1.TenantId)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_menu_dto_1.CreateMenuDto, Object]),
+    __metadata("design:paramtypes", [create_menu_dto_1.CreateMenuDto, String]),
     __metadata("design:returntype", void 0)
 ], MenuController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
-    __param(0, (0, common_1.Req)()),
+    __param(0, (0, tenant_id_decorator_1.TenantId)()),
     __param(1, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, menu_query_dto_1.MenuQueryDto]),
+    __metadata("design:paramtypes", [String, menu_query_dto_1.MenuQueryDto]),
     __metadata("design:returntype", void 0)
 ], MenuController.prototype, "findAll", null);
 exports.MenuController = MenuController = __decorate([

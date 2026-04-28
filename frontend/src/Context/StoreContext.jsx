@@ -36,15 +36,19 @@ const StoreContextProvider = ({ children }) => {
     const currency = '$';
     const deliveryCharge = 2.5;
     const currentUser = useMemo(() => decodeTokenPayload(token), [token]);
+    const tenantHeaderValue = (currentUser?.tenantId ?? tenantSubdomain).trim();
 
     const requestHeaders = useMemo(
         () => ({
+            ...(tenantHeaderValue
+                ? { 'tenant-id': tenantHeaderValue }
+                : {}),
             ...(tenantSubdomain
                 ? { 'x-tenant-subdomain': tenantSubdomain.trim().toLowerCase() }
                 : {}),
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
         }),
-        [tenantSubdomain, token],
+        [tenantHeaderValue, tenantSubdomain, token],
     );
 
     const addToCart = async (itemId) => {
@@ -133,7 +137,7 @@ const StoreContextProvider = ({ children }) => {
                         timezone: 'America/Chicago',
                     },
                 },
-                { headers: { 'x-tenant-subdomain': subdomain } },
+                { headers: { 'tenant-id': subdomain, 'x-tenant-subdomain': subdomain } },
             );
             const issuedToken = onboarding.data?.token;
             if (issuedToken) {
@@ -151,7 +155,7 @@ const StoreContextProvider = ({ children }) => {
                     email: demoOwnerEmail(subdomain),
                     password: demoOwnerPassword,
                 },
-                { headers: { 'x-tenant-subdomain': subdomain } },
+                { headers: { 'tenant-id': subdomain, 'x-tenant-subdomain': subdomain } },
             );
             const issuedToken = login.data?.token;
             if (issuedToken) {

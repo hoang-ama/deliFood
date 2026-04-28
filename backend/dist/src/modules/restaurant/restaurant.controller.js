@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RestaurantController = void 0;
 const common_1 = require("@nestjs/common");
+const tenant_id_decorator_1 = require("../../common/decorators/tenant-id.decorator");
 const roles_decorator_1 = require("../../common/decorators/roles.decorator");
 const auth_guard_1 = require("../../common/guards/auth.guard");
 const jwt_auth_guard_1 = require("../../common/guards/jwt-auth.guard");
@@ -25,11 +26,18 @@ let RestaurantController = class RestaurantController {
     constructor(restaurantService) {
         this.restaurantService = restaurantService;
     }
-    create(dto, req) {
-        return this.restaurantService.create(dto, req.tenantId);
+    create(dto, tenantId) {
+        return this.restaurantService.create(dto, tenantId);
     }
-    findAll(req) {
-        return this.restaurantService.findAll(req.tenantId);
+    findAll(tenantId) {
+        return this.restaurantService.findAll(tenantId);
+    }
+    async getRestaurantInfo(tenantId) {
+        const restaurant = await this.restaurantService.findByTenant(tenantId);
+        if (!restaurant) {
+            throw new common_1.NotFoundException(`Restaurant not found for tenant: ${tenantId}`);
+        }
+        return restaurant;
     }
 };
 exports.RestaurantController = RestaurantController;
@@ -38,18 +46,25 @@ __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, auth_guard_1.AuthGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)('owner'),
     __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Req)()),
+    __param(1, (0, tenant_id_decorator_1.TenantId)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_restaurant_dto_1.CreateRestaurantDto, Object]),
+    __metadata("design:paramtypes", [create_restaurant_dto_1.CreateRestaurantDto, String]),
     __metadata("design:returntype", void 0)
 ], RestaurantController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
-    __param(0, (0, common_1.Req)()),
+    __param(0, (0, tenant_id_decorator_1.TenantId)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], RestaurantController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('info'),
+    __param(0, (0, tenant_id_decorator_1.TenantId)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], RestaurantController.prototype, "getRestaurantInfo", null);
 exports.RestaurantController = RestaurantController = __decorate([
     (0, common_1.Controller)('restaurants'),
     __metadata("design:paramtypes", [restaurant_service_1.RestaurantService])

@@ -7,14 +7,26 @@ const global_exception_filter_1 = require("./common/filters/global-exception.fil
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.setGlobalPrefix('api');
-    app.enableCors();
+    app.enableCors({
+        origin: (origin, callback) => {
+            if (!origin || origin.includes('local.delifood.com') || origin.includes('localhost')) {
+                callback(null, true);
+            }
+            else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'tenant-id'],
+        credentials: true,
+    });
     app.useGlobalFilters(new global_exception_filter_1.GlobalExceptionFilter());
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,
         transform: true,
         forbidNonWhitelisted: true,
     }));
-    await app.listen(process.env.PORT ?? 3000);
+    await app.listen(process.env.PORT ?? 4000);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map

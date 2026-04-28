@@ -31,6 +31,11 @@ let RestaurantService = class RestaurantService {
             orderBy: { name: 'asc' },
         });
     }
+    async findByTenant(tenantId) {
+        return this.prisma.restaurant.findFirst({
+            where: { tenantId },
+        });
+    }
 };
 exports.RestaurantService = RestaurantService;
 exports.RestaurantService = RestaurantService = __decorate([

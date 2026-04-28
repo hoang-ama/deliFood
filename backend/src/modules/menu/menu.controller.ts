@@ -1,12 +1,5 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Query,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { TenantId } from '../../common/decorators/tenant-id.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -22,12 +15,12 @@ export class MenuController {
   @Post()
   @UseGuards(JwtAuthGuard, AuthGuard, RolesGuard)
   @Roles('owner', 'staff')
-  create(@Body() dto: CreateMenuDto, @Req() req: any) {
-    return this.menuService.create(dto, req.tenantId);
+  create(@Body() dto: CreateMenuDto, @TenantId() tenantId: string) {
+    return this.menuService.create(dto, tenantId);
   }
 
   @Get()
-  findAll(@Req() req: any, @Query() query: MenuQueryDto) {
-    return this.menuService.findAll(req.tenantId, query.restaurantId);
+  findAll(@TenantId() tenantId: string, @Query() query: MenuQueryDto) {
+    return this.menuService.findAll(tenantId, query.restaurantId);
   }
 }

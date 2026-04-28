@@ -5,56 +5,26 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TenantMiddleware = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../../prisma/prisma.service");
 let TenantMiddleware = class TenantMiddleware {
-    prisma;
-    constructor(prisma) {
-        this.prisma = prisma;
-    }
-    async use(req, res, next) {
-        const urlPath = typeof req.originalUrl === 'string'
-            ? req.originalUrl.split('?')[0]
-            : '';
-        const isPublicOnboarding = req.method === 'POST' &&
-            (urlPath === '/api/onboarding' ||
-                urlPath === '/onboarding' ||
-                urlPath.endsWith('/onboarding'));
-        if (isPublicOnboarding) {
-            next();
-            return;
+    use(request, response, next) {
+        void response;
+        const publicRoutes = ['/api/onboarding', '/onboarding', '/api/health', '/health'];
+        if (publicRoutes.some(route => request.url.startsWith(route))) {
+            return next();
         }
-        const host = req.headers.host;
-        const subdomainFromHost = host?.split('.')[0];
-        const subdomainFromHeader = req.headers['x-tenant-subdomain'];
-        const subdomainOverride = typeof subdomainFromHeader === 'string' && subdomainFromHeader.trim() !== ''
-            ? subdomainFromHeader.trim().toLowerCase()
-            : null;
-        const subdomain = subdomainOverride ?? subdomainFromHost;
-        let tenant;
-        if (!subdomain || subdomain === 'localhost') {
-            tenant = await this.prisma.tenant.findFirst();
+        const tenantId = request.headers['tenant-id'];
+        if (!tenantId) {
+            throw new common_1.BadRequestException('X-Tenant-ID header is missing');
         }
-        else {
-            tenant = await this.prisma.tenant.findUnique({
-                where: { subdomain },
-            });
-        }
-        if (!tenant) {
-            return res.status(404).json({ message: 'Tenant not found' });
-        }
-        req.tenantId = tenant.id;
+        request['tenantId'] = tenantId;
         next();
     }
 };
 exports.TenantMiddleware = TenantMiddleware;
 exports.TenantMiddleware = TenantMiddleware = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    (0, common_1.Injectable)()
 ], TenantMiddleware);
 //# sourceMappingURL=tenant.middleware.js.map

@@ -13,4 +13,9 @@ export declare class RestaurantService {
         name: string;
         tenantId: string;
     }[]>;
+    findByTenant(tenantId: string): Promise<{
+        id: string;
+        name: string;
+        tenantId: string;
+    } | null>;
 }

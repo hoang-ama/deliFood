@@ -21,4 +21,10 @@ export class RestaurantService {
       orderBy: { name: 'asc' },
     });
   }
+
+  async findByTenant(tenantId: string) {
+    return this.prisma.restaurant.findFirst({
+      where: { tenantId },
+    });
+  }
 }

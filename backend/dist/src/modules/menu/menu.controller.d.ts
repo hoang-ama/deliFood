@@ -4,18 +4,18 @@ import { MenuService } from './menu.service';
 export declare class MenuController {
     private readonly menuService;
     constructor(menuService: MenuService);
-    create(dto: CreateMenuDto, req: any): Promise<{
+    create(dto: CreateMenuDto, tenantId: string): Promise<{
         id: string;
         name: string;
         tenantId: string;
-        price: number;
         restaurantId: string;
+        price: number;
     }>;
-    findAll(req: any, query: MenuQueryDto): Promise<{
+    findAll(tenantId: string, query: MenuQueryDto): Promise<{
         id: string;
         name: string;
         tenantId: string;
-        price: number;
         restaurantId: string;
+        price: number;
     }[]>;
 }

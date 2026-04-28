@@ -14,9 +14,9 @@ export declare class AdminService {
     getRecentOrders(tenantId: string, limit?: number): Promise<{
         id: string;
         createdAt: Date;
-        userId: string;
         tenantId: string;
         restaurantId: string;
+        userId: string;
         status: string;
         total: number;
     }[]>;

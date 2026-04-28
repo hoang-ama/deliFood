@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Post, UseGuards } from '@nestjs/common';
+import { TenantId } from '../../common/decorators/tenant-id.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -13,12 +14,21 @@ export class RestaurantController {
   @Post()
   @UseGuards(JwtAuthGuard, AuthGuard, RolesGuard)
   @Roles('owner')
-  create(@Body() dto: CreateRestaurantDto, @Req() req: any) {
-    return this.restaurantService.create(dto, req.tenantId);
+  create(@Body() dto: CreateRestaurantDto, @TenantId() tenantId: string) {
+    return this.restaurantService.create(dto, tenantId);
   }
 
   @Get()
-  findAll(@Req() req: any) {
-    return this.restaurantService.findAll(req.tenantId);
+  findAll(@TenantId() tenantId: string) {
+    return this.restaurantService.findAll(tenantId);
+  }
+
+  @Get('info')
+  async getRestaurantInfo(@TenantId() tenantId: string) {
+    const restaurant = await this.restaurantService.findByTenant(tenantId);
+    if (!restaurant) {
+      throw new NotFoundException(`Restaurant not found for tenant: ${tenantId}`);
+    }
+    return restaurant;
   }
 }

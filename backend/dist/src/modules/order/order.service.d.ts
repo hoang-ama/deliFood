@@ -8,9 +8,9 @@ export declare class OrderService {
     create(dto: CreateOrderDto, tenantId: string, userId: string): Promise<{
         id: string;
         createdAt: Date;
-        userId: string;
         tenantId: string;
         restaurantId: string;
+        userId: string;
         status: string;
         total: number;
     }>;
@@ -18,9 +18,9 @@ export declare class OrderService {
         data: {
             id: string;
             createdAt: Date;
-            userId: string;
             tenantId: string;
             restaurantId: string;
+            userId: string;
             status: string;
             total: number;
         }[];
@@ -34,9 +34,9 @@ export declare class OrderService {
     updateStatus(orderId: string, dto: UpdateOrderStatusDto, tenantId: string): Promise<{
         id: string;
         createdAt: Date;
-        userId: string;
         tenantId: string;
         restaurantId: string;
+        userId: string;
         status: string;
         total: number;
     }>;

@@ -15,9 +15,9 @@ export declare class AdminController {
     getRecentOrders(req: any, query: RecentOrdersQueryDto): Promise<{
         id: string;
         createdAt: Date;
-        userId: string;
         tenantId: string;
         restaurantId: string;
+        userId: string;
         status: string;
         total: number;
     }[]>;

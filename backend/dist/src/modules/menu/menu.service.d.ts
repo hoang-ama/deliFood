@@ -7,14 +7,14 @@ export declare class MenuService {
         id: string;
         name: string;
         tenantId: string;
-        price: number;
         restaurantId: string;
+        price: number;
     }>;
     findAll(tenantId: string, restaurantId?: string): Promise<{
         id: string;
         name: string;
         tenantId: string;
-        price: number;
         restaurantId: string;
+        price: number;
     }[]>;
 }
