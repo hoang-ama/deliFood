@@ -19,7 +19,13 @@ async function bootstrap() {
       }
     },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'tenant-id'], // Quan trọng: Thêm tenant-id vào đây
+    allowedHeaders: [
+      'Content-Type',
+      'Accept',
+      'Authorization',
+      'tenant-id',
+      'x-tenant-subdomain',
+    ],
     credentials: true,
   });
   app.useGlobalFilters(new GlobalExceptionFilter());

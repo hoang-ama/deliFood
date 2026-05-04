@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types, react-refresh/only-export-components */
 import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
-import { menu_list, food_images } from '../assets/assets';
+import { menu_list, food_images, food_list as fallbackFoodList } from '../assets/assets';
 export const StoreContext = createContext(null);
 
 const decodeTokenPayload = (value) => {
@@ -31,24 +31,34 @@ const StoreContextProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState({});
     const [token, setToken] = useState(localStorage.getItem('token') ?? '');
     const [tenantSubdomain, setTenantSubdomainState] = useState(
-        localStorage.getItem('tenantSubdomain') ?? import.meta.env.VITE_DEFAULT_TENANT_ID ?? 'pho-houston',
+        localStorage.getItem('tenantSubdomain') ?? '',
     );
     const currency = '$';
     const deliveryCharge = 2.5;
     const currentUser = useMemo(() => decodeTokenPayload(token), [token]);
-    const tenantHeaderValue = (currentUser?.tenantId ?? tenantSubdomain).trim();
+    const normalizedTenantSubdomain = tenantSubdomain.trim().toLowerCase();
+    const tenantHeaderValue = (currentUser?.tenantId ?? normalizedTenantSubdomain).trim();
 
     const requestHeaders = useMemo(
         () => ({
             ...(tenantHeaderValue
                 ? { 'tenant-id': tenantHeaderValue }
                 : {}),
-            ...(tenantSubdomain
-                ? { 'x-tenant-subdomain': tenantSubdomain.trim().toLowerCase() }
+            ...(normalizedTenantSubdomain
+                ? { 'x-tenant-subdomain': normalizedTenantSubdomain }
                 : {}),
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
         }),
-        [tenantHeaderValue, tenantSubdomain, token],
+        [normalizedTenantSubdomain, tenantHeaderValue, token],
+    );
+
+    const publicRequestHeaders = useMemo(
+        () => ({
+            ...(normalizedTenantSubdomain
+                ? { 'x-tenant-subdomain': normalizedTenantSubdomain }
+                : {}),
+        }),
+        [normalizedTenantSubdomain],
     );
 
     const addToCart = async (itemId) => {
@@ -82,15 +92,26 @@ const StoreContextProvider = ({ children }) => {
     }
 
     const fetchRestaurantList = useCallback(async () => {
-        const response = await axios.get(`${url}/api/restaurants`, { headers: requestHeaders });
-        const restaurants = Array.isArray(response.data) ? response.data : [];
-        setRestaurantList(restaurants);
-    }, [requestHeaders, url]);
+        if (!normalizedTenantSubdomain) {
+            setRestaurantList([]);
+            return;
+        }
+
+        try {
+            const response = await axios.get(`${url}/api/restaurants`, { headers: publicRequestHeaders });
+            const restaurants = Array.isArray(response.data) ? response.data : [];
+            setRestaurantList(restaurants);
+        } catch (error) {
+            console.error('Error fetching restaurant list:', error);
+            setRestaurantList([]);
+        }
+    }, [normalizedTenantSubdomain, publicRequestHeaders, url]);
 
     const getCategoryFromName = (name) => {
         const lower = name.toLowerCase();
         if (lower.includes('pho') || lower.includes('soup') || lower.includes('broth')) return 'Pho';
-        if (lower.includes('roll') || lower.includes('spring') || lower.includes('egg roll') || lower.includes('dumpling')) return 'Appetizers';
+        if (lower.includes('roll') || lower.includes('spring') || lower.includes('egg roll')) return 'Rolls';
+        if (lower.includes('appetizer') || lower.includes('starter') || lower.includes('dumpling')) return 'Appetizers';
         if (lower.includes('coffee') || lower.includes('tea') || lower.includes('juice') || lower.includes('lemonade') || lower.includes('drink') || lower.includes('bubble')) return 'Beverages';
         if (lower.includes('noodle') || lower.includes('ramen') || lower.includes('udon')) return 'Noodles';
         if (lower.includes('pasta') || lower.includes('spaghetti')) return 'Pasta';
@@ -98,6 +119,17 @@ const StoreContextProvider = ({ children }) => {
         if (lower.includes('sandwich') || lower.includes('banh mi')) return 'Sandwich';
         return 'All';
     };
+
+    const normalizeFallbackFoods = () =>
+        fallbackFoodList.map((item, index) => ({
+            ...item,
+            id: item.id ?? item._id ?? `${index}`,
+            _id: item._id ?? item.id ?? `${index}`,
+            category: item.category ?? getCategoryFromName(item.name ?? ''),
+            description: item.description ?? getDescriptionFromName(item.name ?? ''),
+            image: item.image ?? food_images[index % food_images.length],
+            price: Number(item.price ?? 0),
+        }));
 
     const getDescriptionFromName = (name) => {
         const lower = name.toLowerCase();
@@ -109,36 +141,57 @@ const StoreContextProvider = ({ children }) => {
         return 'Made fresh daily with quality ingredients.';
     };
 
-// Sửa hàm fetchFoodList trong StoreContextProvider
-const fetchFoodList = async () => {
-    try {
-        const response = await api.get("/menu/storefront");
-        
-        // Dữ liệu NestJS trả về: [{ name: 'Pho', items: [...] }, { name: 'Drinks', items: [...] }]
-        // Chúng ta cần gộp tất cả 'items' lại thành 1 mảng duy nhất
-        const allFoods = response.data.reduce((acc, category) => {
-            // Gán thêm trường category cho mỗi item để logic Filter của Frontend hoạt động
-            const itemsWithCategory = category.items.map(item => ({
-                ...item,
-                category: category.name 
-            }));
-            return [...acc, ...itemsWithCategory];
-        }, []);
+    const fetchFoodList = useCallback(async () => {
+        if (!normalizedTenantSubdomain) {
+            setFoodList(normalizeFallbackFoods());
+            return;
+        }
 
-        setFoodList(allFoods);
-    } catch (error) {
-        console.error("Error fetching food list:", error);
-        // Fallback dùng dữ liệu mẫu nếu API lỗi để demo không bị trắng trang
-        // setFoodList(assets.food_list); 
-    }
-};
+        try {
+            const response = await axios.get(`${url}/api/menus`, { headers: publicRequestHeaders });
+            const payload = Array.isArray(response.data) ? response.data : [];
+
+            const allFoods = payload.some((entry) => Array.isArray(entry?.items))
+                ? payload.flatMap((group, groupIndex) => {
+                    const categoryName = getCategoryFromName(group?.name ?? '');
+                    return (group?.items ?? []).map((item, itemIndex) => ({
+                        id: item.id ?? item._id ?? `${groupIndex}-${itemIndex}`,
+                        _id: item._id ?? item.id ?? `${groupIndex}-${itemIndex}`,
+                        name: item.name ?? 'Unnamed item',
+                        price: Number(item.price ?? 0),
+                        image: item.image ?? item.imageUrl ?? food_images[(groupIndex + itemIndex) % food_images.length],
+                        description: item.description ?? getDescriptionFromName(item.name ?? ''),
+                        category: getCategoryFromName(item.category ?? categoryName),
+                    }));
+                })
+                : payload.map((item, index) => ({
+                    id: item.id ?? item._id ?? `${index}`,
+                    _id: item._id ?? item.id ?? `${index}`,
+                    name: item.name ?? 'Unnamed item',
+                    price: Number(item.price ?? 0),
+                    image: item.image ?? item.imageUrl ?? food_images[index % food_images.length],
+                    description: item.description ?? getDescriptionFromName(item.name ?? ''),
+                    category: getCategoryFromName(item.category ?? item.name ?? ''),
+                }));
+
+            setFoodList(allFoods);
+        } catch (error) {
+            console.error('Error fetching food list:', error);
+            setFoodList([]);
+        }
+    }, [normalizedTenantSubdomain, publicRequestHeaders, url]);
     const loadCartData = async () => {};
 
-    const setTenantSubdomain = (value) => {
+    const setTenantSubdomain = useCallback((value = '') => {
         const normalized = value.trim().toLowerCase();
         setTenantSubdomainState(normalized);
-        localStorage.setItem('tenantSubdomain', normalized);
-    };
+        if (normalized) {
+            localStorage.setItem('tenantSubdomain', normalized);
+            return;
+        }
+
+        localStorage.removeItem('tenantSubdomain');
+    }, []);
 
     const demoOwnerEmail = (subdomain) => `owner.${subdomain}@example.com`;
     const demoOwnerPassword = 'demoowner12345';
@@ -238,12 +291,3 @@ const fetchFoodList = async () => {
 }
 
 export default StoreContextProvider;
-
-const getTenantId = () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const tenantFromUrl = urlParams.get('tenant');
-    if (tenantFromUrl) return tenantFromUrl;
-    
-    // Logic cũ cho subdomain...
-    return import.meta.env.VITE_DEFAULT_TENANT_ID || "pho-houston";
-};

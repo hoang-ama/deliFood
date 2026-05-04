@@ -14,6 +14,7 @@ const auth_controller_1 = require("./auth.controller");
 const auth_service_1 = require("./auth.service");
 const jwt_strategy_1 = require("./jwt.strategy");
 const prisma_module_1 = require("../../prisma/prisma.module");
+const jwtSecret = process.env.JWT_SECRET ?? 'delifood-dev-secret';
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -23,7 +24,7 @@ exports.AuthModule = AuthModule = __decorate([
             prisma_module_1.PrismaModule,
             passport_1.PassportModule,
             jwt_1.JwtModule.register({
-                secret: process.env.JWT_SECRET,
+                secret: jwtSecret,
                 signOptions: { expiresIn: '7d' },
             }),
         ],

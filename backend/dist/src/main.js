@@ -17,7 +17,13 @@ async function bootstrap() {
             }
         },
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-        allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'tenant-id'],
+        allowedHeaders: [
+            'Content-Type',
+            'Accept',
+            'Authorization',
+            'tenant-id',
+            'x-tenant-subdomain',
+        ],
         credentials: true,
     });
     app.useGlobalFilters(new global_exception_filter_1.GlobalExceptionFilter());

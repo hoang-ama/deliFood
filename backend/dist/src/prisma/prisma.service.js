@@ -15,7 +15,28 @@ const adapter_pg_1 = require("@prisma/adapter-pg");
 const client_1 = require("@prisma/client");
 let PrismaService = class PrismaService extends client_1.PrismaClient {
     constructor() {
-        const connectionString = process.env.DATABASE_URL;
+        const fallbackConnectionString = 'postgresql://postgres:postgres@localhost:5432/delifood';
+        const envConnectionString = process.env.DATABASE_URL?.trim();
+        let connectionString = fallbackConnectionString;
+        if (envConnectionString &&
+            !envConnectionString.includes('${') &&
+            !envConnectionString.includes('undefined') &&
+            !envConnectionString.includes('null')) {
+            try {
+                const parsedConnection = new URL(envConnectionString);
+                const hasRequiredParts = parsedConnection.protocol.startsWith('postgres') &&
+                    Boolean(parsedConnection.hostname) &&
+                    Boolean(parsedConnection.username) &&
+                    Boolean(parsedConnection.password) &&
+                    parsedConnection.pathname !== '/';
+                connectionString = hasRequiredParts
+                    ? envConnectionString
+                    : fallbackConnectionString;
+            }
+            catch {
+                connectionString = fallbackConnectionString;
+            }
+        }
         const adapter = new adapter_pg_1.PrismaPg({ connectionString });
         super({ adapter });
     }

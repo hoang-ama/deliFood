@@ -6,12 +6,14 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { PrismaModule } from '../../prisma/prisma.module';
 
+const jwtSecret = process.env.JWT_SECRET ?? 'delifood-dev-secret';
+
 @Module({
   imports: [
     PrismaModule,
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
+      secret: jwtSecret,
       signOptions: { expiresIn: '7d' },
     }),
   ],

@@ -13,7 +13,7 @@ const FoodDisplay = ({category}) => {
       <div className='food-display-list'>
         {food_list.map((item,index)=>{
           if (category==="All" || category===item.category) {
-            return <FoodItem key={index} id={item.id || item._id} image={item.image} name={item.name} desc={item.description} price={item.price} id={item._id}/>
+            return <FoodItem key={item.id || item._id || index} id={item.id || item._id} image={item.image} name={item.name} desc={item.description} price={item.price}/>
           }
           return null;
         })}
@@ -23,3 +23,4 @@ const FoodDisplay = ({category}) => {
 }
 
 export default FoodDisplay
+

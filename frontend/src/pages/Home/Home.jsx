@@ -1,14 +1,16 @@
-import { useContext, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import './Home.css'
 import ExploreMenu from '../../components/ExploreMenu/ExploreMenu'
 import FoodDisplay from '../../components/FoodDisplay/FoodDisplay'
 import AppDownload from '../../components/AppDownload/AppDownload'
 import { StoreContext } from '../../Context/StoreContext'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 
 const Home = () => {
 
   const [category,setCategory] = useState("All")
+  const navigate = useNavigate()
+  const { tenantSlug } = useParams()
   const {
     restaurant_list,
     food_list,
@@ -17,6 +19,13 @@ const Home = () => {
     currency,
   } = useContext(StoreContext)
   const [tenantInput, setTenantInput] = useState(tenantSubdomain)
+
+  useEffect(() => {
+    const normalizedTenant = (tenantSlug ?? '').trim().toLowerCase()
+    setTenantSubdomain(normalizedTenant)
+    setTenantInput(normalizedTenant)
+    setCategory("All")
+  }, [tenantSlug, setTenantSubdomain])
 
   const restaurant = restaurant_list[0]
   const averagePrice = useMemo(() => {
@@ -30,12 +39,14 @@ const Home = () => {
 
   const applyTenant = (event) => {
     event.preventDefault()
-    if (!tenantInput.trim()) {
+    const normalizedTenant = tenantInput.trim().toLowerCase()
+
+    if (!normalizedTenant) {
+      navigate('/')
       return
     }
 
-    setTenantSubdomain(tenantInput)
-    setCategory("All")
+    navigate(`/${normalizedTenant}`)
   }
 
   return (
