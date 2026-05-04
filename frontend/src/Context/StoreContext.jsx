@@ -109,23 +109,29 @@ const StoreContextProvider = ({ children }) => {
         return 'Made fresh daily with quality ingredients.';
     };
 
-    const fetchFoodList = useCallback(async () => {
-        const response = await axios.get(`${url}/api/menus`, { headers: requestHeaders });
-        const menus = Array.isArray(response.data) ? response.data : [];
-        setFoodList(
-            menus.map((item, index) => ({
-                _id: item.id,
-                id: item.id,
-                name: item.name,
-                price: item.price,
-                description: getDescriptionFromName(item.name),
-                category: getCategoryFromName(item.name),
-                image: food_images[index % food_images.length],
-                restaurantId: item.restaurantId,
-            })),
-        );
-    }, [requestHeaders, url]);
+// Sửa hàm fetchFoodList trong StoreContextProvider
+const fetchFoodList = async () => {
+    try {
+        const response = await api.get("/menu/storefront");
+        
+        // Dữ liệu NestJS trả về: [{ name: 'Pho', items: [...] }, { name: 'Drinks', items: [...] }]
+        // Chúng ta cần gộp tất cả 'items' lại thành 1 mảng duy nhất
+        const allFoods = response.data.reduce((acc, category) => {
+            // Gán thêm trường category cho mỗi item để logic Filter của Frontend hoạt động
+            const itemsWithCategory = category.items.map(item => ({
+                ...item,
+                category: category.name 
+            }));
+            return [...acc, ...itemsWithCategory];
+        }, []);
 
+        setFoodList(allFoods);
+    } catch (error) {
+        console.error("Error fetching food list:", error);
+        // Fallback dùng dữ liệu mẫu nếu API lỗi để demo không bị trắng trang
+        // setFoodList(assets.food_list); 
+    }
+};
     const loadCartData = async () => {};
 
     const setTenantSubdomain = (value) => {
