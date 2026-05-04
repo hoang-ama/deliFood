@@ -2,18 +2,16 @@ import basket_icon from './basket_icon.png'
 import logo from './logo.png'
 import header_img from './header_img.png'
 import search_icon from './search_icon.png'
-import menu_1 from './menu_1.png'
-import menu_2 from './menu_2.png'
-import menu_3 from './menu_3.png'
-import menu_4 from './menu_4.png'
-import menu_5 from './menu_5.png'
-import menu_6 from './menu_6.png'
-import menu_7 from './menu_7.png'
-import menu_8 from './menu_8.png'
+import menu_salad from './menu_salad.png'
+import menu_rolls from './menu_rolls.png'
+import menu_dessert from './menu_deserts.png'
+import menu_sandwich from './menu_sandwich.png'
+import menu_cake from './menu_cake.png'
+import menu_pure_veg from './menu_pureveg.png'
+import menu_pasta from './menu_pasta.png'
+import menu_noodles from './menu_noodles.png'
+import menu_beverages from './menu_beverages.jpg'
 
-import pho_img from './noodles.jpg'
-import appetizers_img from './rolls.jpg'
-import beverages_img from './dessert.jpg'
 
 import food_1 from './food_1.png'
 import food_2 from './food_2.png'
@@ -92,37 +90,38 @@ export const assets = {
 
 export const menu_list = [
     {
-        menu_name: "Pho",
-        menu_image: pho_img
-    },
-    {
-        menu_name: "Appetizers",
-        menu_image: appetizers_img
-    },
-    {
-        menu_name: "Beverages",
-        menu_image: beverages_img
+        menu_name: "Noodles",
+        menu_image: menu_noodles
     },
     {
         menu_name: "Rolls",
-        menu_image: menu_2
+        menu_image: menu_rolls
     },
     {
         menu_name: "Sandwich",
-        menu_image: menu_4
+        menu_image: menu_sandwich
     },
     {
-        menu_name: "Noodles",
-        menu_image: menu_8
+        menu_name: "Rice",
+        menu_image: menu_pure_veg
+    },
+    {
+        menu_name: "Beverages",
+        menu_image: menu_beverages
     },
     {
         menu_name: "Pasta",
-        menu_image: menu_7
+        menu_image: menu_pasta
     },
     {
         menu_name: "Salad",
-        menu_image: menu_1
-    }]
+        menu_image: menu_salad
+    },
+    {
+        menu_name: "Cake",
+        menu_image: menu_cake
+    }
+]
 
 export const food_images = [
     food_1, food_2, food_3, food_4, food_5, food_6, food_7, food_8,
@@ -134,93 +133,93 @@ export const food_images = [
 export const food_list = [
     {
         _id: "1",
-        name: "Greek salad",
+        name: "Special Combination Noodles",
         image: food_1,
         price: 12,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Salad"
+        category: "Noodles"
     },
     {
         _id: "2",
-        name: "Veg salad",
+        name: "Free-range Chicken Noodles",
         image: food_2,
         price: 18,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Salad"
+        category: "Noodles"
     }, {
         _id: "3",
-        name: "Clover Salad",
+        name: "Fresh Spring Rolls",
         image: food_3,
         price: 16,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Salad"
+        category: "Rolls"
     }, {
         _id: "4",
-        name: "Chicken Salad",
+        name: "Crispy Egg Rolls",
         image: food_4,
         price: 24,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Salad"
+        category: "Rolls"
     }, {
         _id: "5",
-        name: "Lasagna Rolls",
+        name: "Vietnamese Iced Milk Coffee",
         image: food_5,
         price: 14,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Rolls"
+        category: "Beverages"
     }, {
         _id: "6",
-        name: "Peri Peri Rolls",
+        name: "Peach Orange Lemongrass Tea",
         image: food_6,
         price: 12,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Rolls"
+        category: "Beverages"
     }, {
         _id: "7",
-        name: "Chicken Rolls",
+        name: "Vietnamese Pork Roll Bread",
         image: food_7,
         price: 20,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Rolls"
+        category: "Sandwich"
     }, {
         _id: "8",
-        name: "Veg Rolls",
+        name: "Spicy Beef Hue Noodles",
         image: food_8,
         price: 15,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Rolls"
+        category: "Noodles"
     }, {
         _id: "9",
-        name: "Ripple Ice Cream",
+        name: "Grilled Chicken Rice Plate",
         image: food_9,
         price: 14,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Deserts"
+        category: "Rice"
     }, {
         _id: "10",
-        name: "Fruit Ice Cream",
+        name: "Shrimp and Pork Fresh Rolls",
         image: food_10,
         price: 22,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Deserts"
+        category: "Rolls"
     }, {
         _id: "11",
-        name: "Jar Ice Cream",
+        name: "Vietnamese Iced Coffee",
         image: food_11,
         price: 10,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Deserts"
+        category: "Beverages"
     }, {
         _id: "12",
-        name: "Vanilla Ice Cream",
+        name: "Saigon Special Bread",
         image: food_12,
         price: 12,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Deserts"
+        category: "Sandwich"
     },
     {
         _id: "13",
-        name: "Chicken Sandwich",
+        name: "Grilled Pork Bread",
         image: food_13,
         price: 12,
         description: "Food provides essential nutrients for overall health and well-being",
@@ -228,81 +227,81 @@ export const food_list = [
     },
     {
         _id: "14",
-        name: "Vegan Sandwich",
+        name: "Grilled Chicken Bread",
         image: food_14,
         price: 18,
         description: "Food provides essential nutrients for overall health and well-being",
         category: "Sandwich"
     }, {
         _id: "15",
-        name: "Grilled Sandwich",
+        name: "Sunny Side Egg Bread",
         image: food_15,
         price: 16,
         description: "Food provides essential nutrients for overall health and well-being",
         category: "Sandwich"
     }, {
         _id: "16",
-        name: "Bread Sandwich",
+        name: "Coconut Coffee",
         image: food_16,
         price: 24,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Sandwich"
+        category: "Beverages"
     }, {
         _id: "17",
-        name: "Cup Cake",
+        name: "Jasmine Milk Tea",
         image: food_17,
         price: 14,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Cake"
+        category: "Beverages"
     }, {
         _id: "18",
-        name: "Vegan Cake",
+        name: "Broken Rice with Grilled Pork Chop",
         image: food_18,
         price: 12,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Cake"
+        category: "Rice"
     }, {
         _id: "19",
-        name: "Butterscotch Cake",
+        name: "Broken Rice with Shredded Pork and Egg Meatloaf",
         image: food_19,
         price: 20,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Cake"
+        category: "Rice"
     }, {
         _id: "20",
-        name: "Sliced Cake",
+        name: "Broken Rice with Roasted Chicken",
         image: food_20,
         price: 15,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Cake"
+        category: "Rice"
     }, {
         _id: "21",
-        name: "Garlic Mushroom ",
+        name: "Grilled Pork Vermicelli Bowl",
         image: food_21,
         price: 14,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Pure Veg"
+        category: "Noodles"
     }, {
         _id: "22",
-        name: "Fried Cauliflower",
+        name: "Salted Plum Soda",
         image: food_22,
         price: 22,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Pure Veg"
+        category: "Beverages"
     }, {
         _id: "23",
-        name: "Mix Veg Pulao",
+        name: "Passion Fruit Tea",
         image: food_23,
         price: 10,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Pure Veg"
+        category: "Beverages"
     }, {
         _id: "24",
-        name: "Rice Zucchini",
+        name: "Tomato Pasta",
         image: food_24,
         price: 12,
         description: "Food provides essential nutrients for overall health and well-being",
-        category: "Pure Veg"
+        category: "Pasta"
     },
     {
         _id: "25",

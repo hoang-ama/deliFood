@@ -114,6 +114,7 @@ const StoreContextProvider = ({ children }) => {
         if (lower.includes('appetizer') || lower.includes('starter') || lower.includes('dumpling')) return 'Appetizers';
         if (lower.includes('coffee') || lower.includes('tea') || lower.includes('juice') || lower.includes('lemonade') || lower.includes('drink') || lower.includes('bubble')) return 'Beverages';
         if (lower.includes('noodle') || lower.includes('ramen') || lower.includes('udon')) return 'Noodles';
+        if (lower.includes('rice') || lower.includes('com tam') || lower.includes('pork chop')) return 'Rice';
         if (lower.includes('pasta') || lower.includes('spaghetti')) return 'Pasta';
         if (lower.includes('salad')) return 'Salad';
         if (lower.includes('sandwich') || lower.includes('banh mi')) return 'Sandwich';
